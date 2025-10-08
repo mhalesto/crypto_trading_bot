@@ -5,7 +5,7 @@ import pandas as pd
 import ccxt
 from ta.momentum import RSIIndicator
 from ta.trend import MACD
-from ta.volatility import BollingerBands
+from ta.volatility import BollingerBands, AverageTrueRange
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -31,19 +31,31 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
     rsi = RSIIndicator(close=df["close"], window=14)
     macd = MACD(close=df["close"])
     bb = BollingerBands(close=df["close"], window=20, window_dev=2)
+    atr = AverageTrueRange(high=df["high"], low=df["low"], close=df["close"], window=14)
     df["rsi"] = rsi.rsi()
     df["macd"] = macd.macd()
     df["macd_signal"] = macd.macd_signal()
     df["bb_high"] = bb.bollinger_hband()
     df["bb_low"] = bb.bollinger_lband()
     df["ret_1"] = df["close"].pct_change()
+    df["atr"] = atr.average_true_range()
     df.dropna(inplace=True)
     return df
 
 def make_supervised(df: pd.DataFrame, horizon:int=1, lookback:int=60) -> Tuple[np.ndarray,np.ndarray, pd.DataFrame]:
     df = df.copy()
     df["y"] = (df["close"].shift(-horizon) > df["close"]).astype(int)
-    feat_cols = ["close","volume","rsi","macd","macd_signal","bb_high","bb_low","ret_1"]
+    feat_cols = [
+        "close",
+        "volume",
+        "rsi",
+        "macd",
+        "macd_signal",
+        "bb_high",
+        "bb_low",
+        "ret_1",
+        "atr",
+    ]
     df.dropna(inplace=True)
     X_list, y_list = [], []
     values = df[feat_cols].values
