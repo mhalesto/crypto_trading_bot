@@ -1,0 +1,29 @@
+# virtual envs
+venv/
+.venv/
+
+# python cache/artifacts
+__pycache__/
+*.py[cod]
+*.so
+*.log
+*.egg-info/
+.eggs/
+
+# notebooks
+.ipynb_checkpoints/
+
+# env/config
+.env
+.env.*
+
+# OS/IDE
+.DS_Store
+.vscode/
+.idea/
+
+# big local dirs (keep out of git)
+data/
+models/
+checkpoints/
+runs/
